@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/types/buffer.rs`."><title>buffer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-bf502f66ec635d5d.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="opendal" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0-nightly (e51e98dde 2023-12-31)" data-channel="nightly" data-search-js="search-c17e98913a53b3b7.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-0b2e2def73e61cbe.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../opendal/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/types/buffer.rs`."><title>buffer.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-2c208a72533b4dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="opendal" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0-nightly (0bf471f33 2024-04-13)" data-channel="nightly" data-search-js="search-ffac13a0df2b1870.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-c97aec732c613ca4.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../opendal/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -712,6 +710,102 @@
 <a href="#710" id="710">710</a>
 <a href="#711" id="711">711</a>
 <a href="#712" id="712">712</a>
+<a href="#713" id="713">713</a>
+<a href="#714" id="714">714</a>
+<a href="#715" id="715">715</a>
+<a href="#716" id="716">716</a>
+<a href="#717" id="717">717</a>
+<a href="#718" id="718">718</a>
+<a href="#719" id="719">719</a>
+<a href="#720" id="720">720</a>
+<a href="#721" id="721">721</a>
+<a href="#722" id="722">722</a>
+<a href="#723" id="723">723</a>
+<a href="#724" id="724">724</a>
+<a href="#725" id="725">725</a>
+<a href="#726" id="726">726</a>
+<a href="#727" id="727">727</a>
+<a href="#728" id="728">728</a>
+<a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a>
+<a href="#732" id="732">732</a>
+<a href="#733" id="733">733</a>
+<a href="#734" id="734">734</a>
+<a href="#735" id="735">735</a>
+<a href="#736" id="736">736</a>
+<a href="#737" id="737">737</a>
+<a href="#738" id="738">738</a>
+<a href="#739" id="739">739</a>
+<a href="#740" id="740">740</a>
+<a href="#741" id="741">741</a>
+<a href="#742" id="742">742</a>
+<a href="#743" id="743">743</a>
+<a href="#744" id="744">744</a>
+<a href="#745" id="745">745</a>
+<a href="#746" id="746">746</a>
+<a href="#747" id="747">747</a>
+<a href="#748" id="748">748</a>
+<a href="#749" id="749">749</a>
+<a href="#750" id="750">750</a>
+<a href="#751" id="751">751</a>
+<a href="#752" id="752">752</a>
+<a href="#753" id="753">753</a>
+<a href="#754" id="754">754</a>
+<a href="#755" id="755">755</a>
+<a href="#756" id="756">756</a>
+<a href="#757" id="757">757</a>
+<a href="#758" id="758">758</a>
+<a href="#759" id="759">759</a>
+<a href="#760" id="760">760</a>
+<a href="#761" id="761">761</a>
+<a href="#762" id="762">762</a>
+<a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
+<a href="#765" id="765">765</a>
+<a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
+<a href="#768" id="768">768</a>
+<a href="#769" id="769">769</a>
+<a href="#770" id="770">770</a>
+<a href="#771" id="771">771</a>
+<a href="#772" id="772">772</a>
+<a href="#773" id="773">773</a>
+<a href="#774" id="774">774</a>
+<a href="#775" id="775">775</a>
+<a href="#776" id="776">776</a>
+<a href="#777" id="777">777</a>
+<a href="#778" id="778">778</a>
+<a href="#779" id="779">779</a>
+<a href="#780" id="780">780</a>
+<a href="#781" id="781">781</a>
+<a href="#782" id="782">782</a>
+<a href="#783" id="783">783</a>
+<a href="#784" id="784">784</a>
+<a href="#785" id="785">785</a>
+<a href="#786" id="786">786</a>
+<a href="#787" id="787">787</a>
+<a href="#788" id="788">788</a>
+<a href="#789" id="789">789</a>
+<a href="#790" id="790">790</a>
+<a href="#791" id="791">791</a>
+<a href="#792" id="792">792</a>
+<a href="#793" id="793">793</a>
+<a href="#794" id="794">794</a>
+<a href="#795" id="795">795</a>
+<a href="#796" id="796">796</a>
+<a href="#797" id="797">797</a>
+<a href="#798" id="798">798</a>
+<a href="#799" id="799">799</a>
+<a href="#800" id="800">800</a>
+<a href="#801" id="801">801</a>
+<a href="#802" id="802">802</a>
+<a href="#803" id="803">803</a>
+<a href="#804" id="804">804</a>
+<a href="#805" id="805">805</a>
+<a href="#806" id="806">806</a>
+<a href="#807" id="807">807</a>
+<a href="#808" id="808">808</a>
 </pre></div><pre class="rust"><code><span class="comment">// Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -731,18 +825,26 @@
 
 </span><span class="kw">use </span>std::collections::VecDeque;
 <span class="kw">use </span>std::convert::Infallible;
-<span class="kw">use </span>std::fmt::{Debug, Formatter};
+<span class="kw">use </span>std::fmt::Debug;
+<span class="kw">use </span>std::fmt::Formatter;
 <span class="kw">use </span>std::io::IoSlice;
 <span class="kw">use </span>std::mem;
+<span class="kw">use </span>std::ops::Bound;
+<span class="kw">use </span>std::ops::RangeBounds;
 <span class="kw">use </span>std::pin::Pin;
 <span class="kw">use </span>std::sync::Arc;
-<span class="kw">use </span>std::task::{Context, Poll};
+<span class="kw">use </span>std::task::Context;
+<span class="kw">use </span>std::task::Poll;
 
-<span class="kw">use </span>bytes::{Buf, BytesMut};
-<span class="kw">use </span>bytes::{BufMut, Bytes};
+<span class="kw">use </span>bytes::Buf;
+<span class="kw">use </span>bytes::BufMut;
+<span class="kw">use </span>bytes::Bytes;
+<span class="kw">use </span>bytes::BytesMut;
 <span class="kw">use </span>futures::Stream;
 
-<span class="doccomment">/// Buffer is a wrapper of contiguous `Bytes` and non contiguous `[Bytes]`.
+<span class="kw">use crate</span>::<span class="kw-2">*</span>;
+
+<span class="doccomment">/// Buffer is a wrapper of contiguous `Bytes` and non-contiguous `[Bytes]`.
 ///
 /// We designed buffer to allow underlying storage to return non-contiguous bytes. For example,
 /// http based storage like s3 could generate non-contiguous bytes by stream.
@@ -761,8 +863,8 @@
 ///
 /// ```rust
 /// use bytes::Buf;
-/// use serde_json;
 /// use opendal::Buffer;
+/// use serde_json;
 ///
 /// fn test(mut buf: Buffer) -&gt; Vec&lt;String&gt; {
 ///     serde_json::from_reader(buf.reader()).unwrap()
@@ -788,8 +890,8 @@
 ///
 /// ```rust
 /// use bytes::Bytes;
-/// use opendal::Buffer;
 /// use futures::TryStreamExt;
+/// use opendal::Buffer;
 ///
 /// async fn test(mut buf: Buffer) -&gt; Vec&lt;Bytes&gt; {
 ///     buf.into_iter().try_collect().await.unwrap()
@@ -814,7 +916,6 @@
 ///     buf.to_bytes()
 /// }
 /// ```
-///
 ///
 </span><span class="attr">#[derive(Clone)]
 </span><span class="kw">pub struct </span>Buffer(Inner);
@@ -861,7 +962,6 @@
         <span class="self">Self</span>::new()
     }
 }
-
 <span class="kw">impl </span>Buffer {
     <span class="doccomment">/// Create a new empty buffer.
     ///
@@ -886,6 +986,51 @@
         <span class="self">self</span>.len() == <span class="number">0
     </span>}
 
+    <span class="doccomment">/// Number of [`Bytes`] in [`Buffer`].
+    ///
+    /// For contiguous buffer, it's always 1. For non-contiguous buffer, it's number of bytes
+    /// available for use.
+    </span><span class="kw">pub fn </span>count(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0 </span>{
+            Inner::Contiguous(<span class="kw">_</span>) =&gt; <span class="number">1</span>,
+            Inner::NonContiguous {
+                parts,
+                idx,
+                size,
+                offset,
+            } =&gt; {
+                parts
+                    .iter()
+                    .skip(<span class="kw-2">*</span>idx)
+                    .fold((<span class="number">0</span>, size + offset), |(count, size), bytes| {
+                        <span class="kw">if </span>size == <span class="number">0 </span>{
+                            (count, <span class="number">0</span>)
+                        } <span class="kw">else </span>{
+                            (count + <span class="number">1</span>, size.saturating_sub(bytes.len()))
+                        }
+                    })
+                    .<span class="number">0
+            </span>}
+        }
+    }
+
+    <span class="doccomment">/// Get current [`Bytes`].
+    </span><span class="kw">pub fn </span>current(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Bytes {
+        <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0 </span>{
+            Inner::Contiguous(inner) =&gt; inner.clone(),
+            Inner::NonContiguous {
+                parts,
+                idx,
+                offset,
+                size,
+            } =&gt; {
+                <span class="kw">let </span>chunk = <span class="kw-2">&amp;</span>parts[<span class="kw-2">*</span>idx];
+                <span class="kw">let </span>n = (chunk.len() - <span class="kw-2">*</span>offset).min(<span class="kw-2">*</span>size);
+                chunk.slice(<span class="kw-2">*</span>offset..<span class="kw-2">*</span>offset + n)
+            }
+        }
+    }
+
     <span class="doccomment">/// Shortens the buffer, keeping the first `len` bytes and dropping the rest.
     ///
     /// If `len` is greater than the buffer’s current length, this has no effect.
@@ -897,6 +1042,49 @@
                 <span class="kw-2">*</span>size = (<span class="kw-2">*</span>size).min(len);
             }
         }
+    }
+
+    <span class="doccomment">/// Returns a slice of self for the provided range.
+    ///
+    /// This will increment the reference count for the underlying memory and return a new Buffer handle set to the slice.
+    ///
+    /// This operation is O(1).
+    </span><span class="kw">pub fn </span>slice(<span class="kw-2">&amp;</span><span class="self">self</span>, range: <span class="kw">impl </span>RangeBounds&lt;usize&gt;) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>len = <span class="self">self</span>.len();
+
+        <span class="kw">let </span>begin = <span class="kw">match </span>range.start_bound() {
+            Bound::Included(<span class="kw-2">&amp;</span>n) =&gt; n,
+            Bound::Excluded(<span class="kw-2">&amp;</span>n) =&gt; n.checked_add(<span class="number">1</span>).expect(<span class="string">"out of range"</span>),
+            Bound::Unbounded =&gt; <span class="number">0</span>,
+        };
+
+        <span class="kw">let </span>end = <span class="kw">match </span>range.end_bound() {
+            Bound::Included(<span class="kw-2">&amp;</span>n) =&gt; n.checked_add(<span class="number">1</span>).expect(<span class="string">"out of range"</span>),
+            Bound::Excluded(<span class="kw-2">&amp;</span>n) =&gt; n,
+            Bound::Unbounded =&gt; len,
+        };
+
+        <span class="macro">assert!</span>(
+            begin &lt;= end,
+            <span class="string">"range start must not be greater than end: {:?} &lt;= {:?}"</span>,
+            begin,
+            end,
+        );
+        <span class="macro">assert!</span>(
+            end &lt;= len,
+            <span class="string">"range end out of bounds: {:?} &lt;= {:?}"</span>,
+            end,
+            len,
+        );
+
+        <span class="kw">if </span>end == begin {
+            <span class="kw">return </span>Buffer::new();
+        }
+
+        <span class="kw">let </span><span class="kw-2">mut </span>ret = <span class="self">self</span>.clone();
+        ret.truncate(end);
+        ret.advance(begin);
+        ret
     }
 
     <span class="doccomment">/// Combine all bytes together into one single [`Bytes`].
@@ -930,8 +1118,10 @@
                 parts, idx, offset, ..
             } =&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>ret = Vec::with_capacity(parts.len() - <span class="kw-2">*</span>idx);
+                <span class="kw">let </span><span class="kw-2">mut </span>new_offset = <span class="kw-2">*</span>offset;
                 <span class="kw">for </span>part <span class="kw">in </span>parts.iter().skip(<span class="kw-2">*</span>idx) {
-                    ret.push(IoSlice::new(<span class="kw-2">&amp;</span>part[<span class="kw-2">*</span>offset..]));
+                    ret.push(IoSlice::new(<span class="kw-2">&amp;</span>part[new_offset..]));
+                    new_offset = <span class="number">0</span>;
                 }
                 ret
             }
@@ -1082,16 +1272,16 @@
                     <span class="kw">return </span><span class="number">0</span>;
                 }
 
-                <span class="kw">let </span><span class="kw-2">mut </span>i = <span class="number">0</span>;
-                <span class="kw">for </span>part <span class="kw">in </span>parts.iter().skip(<span class="kw-2">*</span>idx) {
-                    <span class="kw">if </span>i &gt;= dst.len() {
-                        <span class="kw">break</span>;
-                    }
-
-                    dst[i] = IoSlice::new(<span class="kw-2">&amp;</span>part[<span class="kw-2">*</span>offset..]);
-                    i += <span class="number">1</span>;
-                }
-                i
+                <span class="kw">let </span><span class="kw-2">mut </span>new_offset = <span class="kw-2">*</span>offset;
+                parts
+                    .iter()
+                    .skip(<span class="kw-2">*</span>idx)
+                    .zip(dst.iter_mut())
+                    .map(|(part, dst)| {
+                        <span class="kw-2">*</span>dst = IoSlice::new(<span class="kw-2">&amp;</span>part[new_offset..]);
+                        new_offset = <span class="number">0</span>;
+                    })
+                    .count()
             }
         }
     }

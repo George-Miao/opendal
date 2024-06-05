@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/services/fs/reader.rs`."><title>reader.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-bf502f66ec635d5d.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="opendal" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0-nightly (e51e98dde 2023-12-31)" data-channel="nightly" data-search-js="search-c17e98913a53b3b7.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-0b2e2def73e61cbe.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../../opendal/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/services/fs/reader.rs`."><title>reader.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-2c208a72533b4dd0.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="opendal" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0-nightly (0bf471f33 2024-04-13)" data-channel="nightly" data-search-js="search-ffac13a0df2b1870.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-c97aec732c613ca4.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../../opendal/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -106,6 +104,20 @@
 <a href="#104" id="104">104</a>
 <a href="#105" id="105">105</a>
 <a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
+<a href="#120" id="120">120</a>
 </pre></div><pre class="rust"><code><span class="comment">// Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -123,93 +135,107 @@
 // specific language governing permissions and limitations
 // under the License.
 
-</span><span class="kw">use </span>tokio::io::ReadBuf;
+</span><span class="kw">use </span>std::io::Read;
+<span class="kw">use </span>std::sync::Arc;
+<span class="kw">use </span>tokio::io::AsyncReadExt;
+<span class="kw">use </span>tokio::io::ReadBuf;
 
+<span class="kw">use </span><span class="kw">super</span>::core::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::raw::<span class="kw-2">*</span>;
 <span class="kw">use crate</span>::<span class="kw-2">*</span>;
 
-<span class="kw">pub struct </span>FsReader {
-    f: std::fs::File,
+<span class="kw">pub struct </span>FsReader&lt;F&gt; {
+    core: Arc&lt;FsCore&gt;,
+    f: F,
+    read: usize,
+    size: usize,
+    buf_size: usize,
 }
 
-<span class="kw">impl </span>FsReader {
-    <span class="kw">pub fn </span>new(f: std::fs::File) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{ f }
-    }
-
-    <span class="kw">fn </span>try_clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
-        <span class="kw">let </span>f = <span class="self">self</span>.f.try_clone().map_err(|err| {
-            Error::new(
-                ErrorKind::Unexpected,
-                <span class="string">"tokio fs clone file description failed"</span>,
-            )
-            .set_source(err)
-        })<span class="question-mark">?</span>;
-
-        <span class="prelude-val">Ok</span>(<span class="self">Self </span>{ f })
-    }
-
-    <span class="attr">#[cfg(target_family = <span class="string">"unix"</span>)]
-    </span><span class="kw">pub fn </span>read_at_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>[u8], offset: u64) -&gt; <span class="prelude-ty">Result</span>&lt;usize&gt; {
-        <span class="kw">use </span>std::os::unix::fs::FileExt;
-        <span class="self">self</span>.f.read_at(buf, offset).map_err(new_std_io_error)
-    }
-
-    <span class="attr">#[cfg(target_family = <span class="string">"windows"</span>)]
-    </span><span class="kw">pub fn </span>read_at_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>[u8], offset: u64) -&gt; <span class="prelude-ty">Result</span>&lt;usize&gt; {
-        <span class="kw">use </span>std::os::windows::fs::FileExt;
-        <span class="self">self</span>.f.seek_read(buf, offset).map_err(new_std_io_error)
-    }
-}
-
-<span class="kw">impl </span>oio::Read <span class="kw">for </span>FsReader {
-    <span class="kw">async fn </span>read_at(<span class="kw-2">&amp;</span><span class="self">self</span>, offset: u64, limit: usize) -&gt; <span class="prelude-ty">Result</span>&lt;Buffer&gt; {
-        <span class="kw">let </span>handle = <span class="self">self</span>.try_clone()<span class="question-mark">?</span>;
-
-        <span class="kw">match </span>tokio::runtime::Handle::try_current() {
-            <span class="prelude-val">Ok</span>(runtime) =&gt; runtime
-                .spawn_blocking(<span class="kw">move </span>|| oio::BlockingRead::read_at(<span class="kw-2">&amp;</span>handle, offset, limit))
-                .<span class="kw">await
-                </span>.map_err(|err| {
-                    Error::new(ErrorKind::Unexpected, <span class="string">"tokio spawn io task failed"</span>).set_source(err)
-                })<span class="question-mark">?</span>,
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(Error::new(
-                ErrorKind::Unexpected,
-                <span class="string">"no tokio runtime found, failed to run io task"</span>,
-            )),
+<span class="kw">impl</span>&lt;F&gt; FsReader&lt;F&gt; {
+    <span class="kw">pub fn </span>new(core: Arc&lt;FsCore&gt;, f: F, size: usize) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            core,
+            f,
+            read: <span class="number">0</span>,
+            size,
+            <span class="comment">// Use 2 MiB as default value.
+            </span>buf_size: <span class="number">2 </span>* <span class="number">1024 </span>* <span class="number">1024</span>,
         }
     }
 }
 
-<span class="kw">impl </span>oio::BlockingRead <span class="kw">for </span>FsReader {
-    <span class="kw">fn </span>read_at(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut </span>offset: u64, limit: usize) -&gt; <span class="prelude-ty">Result</span>&lt;Buffer&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>bs = Vec::with_capacity(limit);
+<span class="kw">impl </span>oio::Read <span class="kw">for </span>FsReader&lt;tokio::fs::File&gt; {
+    <span class="kw">async fn </span>read(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Buffer&gt; {
+        <span class="kw">if </span><span class="self">self</span>.read &gt;= <span class="self">self</span>.size {
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(Buffer::new());
+        }
 
-        <span class="kw">let </span>buf = bs.spare_capacity_mut();
+        <span class="kw">let </span><span class="kw-2">mut </span>bs = <span class="self">self</span>.core.buf_pool.get();
+        bs.reserve(<span class="self">self</span>.buf_size);
+
+        <span class="kw">let </span>size = (<span class="self">self</span>.size - <span class="self">self</span>.read).min(<span class="self">self</span>.buf_size);
+        <span class="kw">let </span>buf = <span class="kw-2">&amp;mut </span>bs.spare_capacity_mut()[..size];
         <span class="kw">let </span><span class="kw-2">mut </span>read_buf: ReadBuf = ReadBuf::uninit(buf);
 
-        <span class="comment">// SAFETY: Read at most `size` bytes into `read_buf`.
+        <span class="comment">// SAFETY: Read at most `limit` bytes into `read_buf`.
         </span><span class="kw">unsafe </span>{
-            read_buf.assume_init(limit);
+            read_buf.assume_init(size);
         }
 
-        <span class="kw">loop </span>{
-            <span class="comment">// If the buffer is full, we are done.
-            </span><span class="kw">if </span>read_buf.initialize_unfilled().is_empty() {
-                <span class="kw">break</span>;
-            }
-            <span class="kw">let </span>n = <span class="self">self</span>.read_at_inner(read_buf.initialize_unfilled(), offset)<span class="question-mark">?</span>;
-            <span class="kw">if </span>n == <span class="number">0 </span>{
-                <span class="kw">break</span>;
-            }
-            read_buf.advance(n);
-            offset += n <span class="kw">as </span>u64;
-        }
+        <span class="kw">let </span>n = <span class="self">self
+            </span>.f
+            .read_buf(<span class="kw-2">&amp;mut </span>read_buf)
+            .<span class="kw">await
+            </span>.map_err(new_std_io_error)<span class="question-mark">?</span>;
+        <span class="self">self</span>.read += n;
 
         <span class="comment">// Safety: We make sure that bs contains `n` more bytes.
         </span><span class="kw">let </span>filled = read_buf.filled().len();
         <span class="kw">unsafe </span>{ bs.set_len(filled) }
-        <span class="prelude-val">Ok</span>(Buffer::from(bs))
+
+        <span class="kw">let </span>frozen = bs.split().freeze();
+        <span class="comment">// Return the buffer to the pool.
+        </span><span class="self">self</span>.core.buf_pool.put(bs);
+
+        <span class="prelude-val">Ok</span>(Buffer::from(frozen))
+    }
+}
+
+<span class="kw">impl </span>oio::BlockingRead <span class="kw">for </span>FsReader&lt;std::fs::File&gt; {
+    <span class="kw">fn </span>read(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Buffer&gt; {
+        <span class="kw">if </span><span class="self">self</span>.read &gt;= <span class="self">self</span>.size {
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(Buffer::new());
+        }
+
+        <span class="kw">let </span><span class="kw-2">mut </span>bs = <span class="self">self</span>.core.buf_pool.get();
+        bs.reserve(<span class="self">self</span>.buf_size);
+
+        <span class="kw">let </span>size = (<span class="self">self</span>.size - <span class="self">self</span>.read).min(<span class="self">self</span>.buf_size);
+        <span class="kw">let </span>buf = <span class="kw-2">&amp;mut </span>bs.spare_capacity_mut()[..size];
+        <span class="kw">let </span><span class="kw-2">mut </span>read_buf: ReadBuf = ReadBuf::uninit(buf);
+
+        <span class="comment">// SAFETY: Read at most `limit` bytes into `read_buf`.
+        </span><span class="kw">unsafe </span>{
+            read_buf.assume_init(size);
+        }
+
+        <span class="kw">let </span>n = <span class="self">self
+            </span>.f
+            .read(read_buf.initialize_unfilled())
+            .map_err(new_std_io_error)<span class="question-mark">?</span>;
+        read_buf.advance(n);
+        <span class="self">self</span>.read += n;
+
+        <span class="comment">// Safety: We make sure that bs contains `n` more bytes.
+        </span><span class="kw">let </span>filled = read_buf.filled().len();
+        <span class="kw">unsafe </span>{ bs.set_len(filled) }
+
+        <span class="kw">let </span>frozen = bs.split().freeze();
+        <span class="comment">// Return the buffer to the pool.
+        </span><span class="self">self</span>.core.buf_pool.put(bs);
+
+        <span class="prelude-val">Ok</span>(Buffer::from(frozen))
     }
 }
 </code></pre></div></section></main></body></html>

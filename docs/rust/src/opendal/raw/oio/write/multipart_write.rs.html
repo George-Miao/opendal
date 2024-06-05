@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/raw/oio/write/multipart_write.rs`."><title>multipart_write.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-bf502f66ec635d5d.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="opendal" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0-nightly (e51e98dde 2023-12-31)" data-channel="nightly" data-search-js="search-c17e98913a53b3b7.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-0b2e2def73e61cbe.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../../../opendal/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/raw/oio/write/multipart_write.rs`."><title>multipart_write.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-2c208a72533b4dd0.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="opendal" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0-nightly (0bf471f33 2024-04-13)" data-channel="nightly" data-search-js="search-ffac13a0df2b1870.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-c97aec732c613ca4.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../../../opendal/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -423,28 +421,6 @@
 <a href="#421" id="421">421</a>
 <a href="#422" id="422">422</a>
 <a href="#423" id="423">423</a>
-<a href="#424" id="424">424</a>
-<a href="#425" id="425">425</a>
-<a href="#426" id="426">426</a>
-<a href="#427" id="427">427</a>
-<a href="#428" id="428">428</a>
-<a href="#429" id="429">429</a>
-<a href="#430" id="430">430</a>
-<a href="#431" id="431">431</a>
-<a href="#432" id="432">432</a>
-<a href="#433" id="433">433</a>
-<a href="#434" id="434">434</a>
-<a href="#435" id="435">435</a>
-<a href="#436" id="436">436</a>
-<a href="#437" id="437">437</a>
-<a href="#438" id="438">438</a>
-<a href="#439" id="439">439</a>
-<a href="#440" id="440">440</a>
-<a href="#441" id="441">441</a>
-<a href="#442" id="442">442</a>
-<a href="#443" id="443">443</a>
-<a href="#444" id="444">444</a>
-<a href="#445" id="445">445</a>
 </pre></div><pre class="rust"><code><span class="comment">// Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -462,15 +438,10 @@
 // specific language governing permissions and limitations
 // under the License.
 
-</span><span class="kw">use </span>std::pin::Pin;
-<span class="kw">use </span>std::sync::Arc;
-<span class="kw">use </span>std::task::Context;
-<span class="kw">use </span>std::task::Poll;
+</span><span class="kw">use </span>std::sync::Arc;
 
-<span class="kw">use </span>bytes::Bytes;
-<span class="kw">use </span>futures::Future;
 <span class="kw">use </span>futures::FutureExt;
-<span class="kw">use </span>futures::StreamExt;
+<span class="kw">use </span>futures::{select, Future};
 
 <span class="kw">use </span><span class="kw">crate</span>::raw::<span class="kw-2">*</span>;
 <span class="kw">use crate</span>::<span class="kw-2">*</span>;
@@ -556,70 +527,37 @@
 ///
 /// - `part_number` is the index of the part, starting from 0.
 /// - `etag` is the `ETag` of the part.
+/// - `checksum` is the optional checksum of the part.
 </span><span class="attr">#[derive(Clone)]
 </span><span class="kw">pub struct </span>MultipartPart {
     <span class="doccomment">/// The number of the part, starting from 0.
     </span><span class="kw">pub </span>part_number: usize,
     <span class="doccomment">/// The etag of the part.
     </span><span class="kw">pub </span>etag: String,
+    <span class="doccomment">/// The checksum of the part.
+    </span><span class="kw">pub </span>checksum: <span class="prelude-ty">Option</span>&lt;String&gt;,
 }
 
-<span class="doccomment">/// WritePartResult is the result returned by [`WritePartFuture`].
-///
-/// The error part will carries input `(part_number, bytes, err)` so caller can retry them.
-</span><span class="kw">type </span>WritePartResult = std::result::Result&lt;MultipartPart, (usize, Bytes, Error)&gt;;
-
-<span class="kw">struct </span>WritePartFuture(BoxedStaticFuture&lt;WritePartResult&gt;);
-
-<span class="doccomment">/// # Safety
-///
-/// wasm32 is a special target that we only have one event-loop for this WritePartFuture.
-</span><span class="kw">unsafe impl </span>Send <span class="kw">for </span>WritePartFuture {}
-
-<span class="doccomment">/// # Safety
-///
-/// We will only take `&amp;mut Self` reference for WritePartFuture.
-</span><span class="kw">unsafe impl </span>Sync <span class="kw">for </span>WritePartFuture {}
-
-<span class="kw">impl </span>Future <span class="kw">for </span>WritePartFuture {
-    <span class="kw">type </span>Output = WritePartResult;
-    <span class="kw">fn </span>poll(<span class="self">self</span>: Pin&lt;<span class="kw-2">&amp;mut </span><span class="self">Self</span>&gt;, cx: <span class="kw-2">&amp;mut </span>Context&lt;<span class="lifetime">'_</span>&gt;) -&gt; Poll&lt;<span class="self">Self</span>::Output&gt; {
-        <span class="self">self</span>.get_mut().<span class="number">0</span>.poll_unpin(cx)
-    }
-}
-
-<span class="kw">impl </span>WritePartFuture {
-    <span class="kw">pub fn </span>new&lt;W: MultipartWrite&gt;(
-        w: Arc&lt;W&gt;,
-        upload_id: Arc&lt;String&gt;,
-        part_number: usize,
-        bytes: Bytes,
-    ) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>fut = <span class="kw">async move </span>{
-            w.write_part(
-                <span class="kw-2">&amp;</span>upload_id,
-                part_number,
-                bytes.len() <span class="kw">as </span>u64,
-                Buffer::from(bytes.clone()),
-            )
-            .<span class="kw">await
-            </span>.map_err(|err| (part_number, bytes, err))
-        };
-
-        WritePartFuture(Box::pin(fut))
-    }
+<span class="kw">struct </span>WriteInput&lt;W: MultipartWrite&gt; {
+    w: Arc&lt;W&gt;,
+    executor: Executor,
+    upload_id: Arc&lt;String&gt;,
+    part_number: usize,
+    bytes: Buffer,
 }
 
 <span class="doccomment">/// MultipartWriter will implements [`Write`] based on multipart
 /// uploads.
 </span><span class="kw">pub struct </span>MultipartWriter&lt;W: MultipartWrite&gt; {
     w: Arc&lt;W&gt;,
+    executor: Executor,
 
     upload_id: <span class="prelude-ty">Option</span>&lt;Arc&lt;String&gt;&gt;,
     parts: Vec&lt;MultipartPart&gt;,
-    cache: <span class="prelude-ty">Option</span>&lt;Bytes&gt;,
-    futures: ConcurrentFutures&lt;WritePartFuture&gt;,
+    cache: <span class="prelude-ty">Option</span>&lt;Buffer&gt;,
     next_part_number: usize,
+
+    tasks: ConcurrentTasks&lt;WriteInput&lt;W&gt;, MultipartPart&gt;,
 }
 
 <span class="doccomment">/// # Safety
@@ -628,18 +566,54 @@
 
 </span><span class="kw">impl</span>&lt;W: MultipartWrite&gt; MultipartWriter&lt;W&gt; {
     <span class="doccomment">/// Create a new MultipartWriter.
-    </span><span class="kw">pub fn </span>new(inner: W, concurrent: usize) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>new(inner: W, executor: <span class="prelude-ty">Option</span>&lt;Executor&gt;, concurrent: usize) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>w = Arc::new(inner);
+        <span class="kw">let </span>executor = executor.unwrap_or_default();
         <span class="self">Self </span>{
-            w: Arc::new(inner),
+            w,
+            executor: executor.clone(),
             upload_id: <span class="prelude-val">None</span>,
             parts: Vec::new(),
             cache: <span class="prelude-val">None</span>,
-            futures: ConcurrentFutures::new(<span class="number">1</span>.max(concurrent)),
             next_part_number: <span class="number">0</span>,
+
+            tasks: ConcurrentTasks::new(executor, concurrent, |input| {
+                Box::pin({
+                    <span class="kw">async move </span>{
+                        <span class="kw">let </span>fut = input.w.write_part(
+                            <span class="kw-2">&amp;</span>input.upload_id,
+                            input.part_number,
+                            input.bytes.len() <span class="kw">as </span>u64,
+                            input.bytes.clone(),
+                        );
+                        <span class="kw">match </span>input.executor.timeout() {
+                            <span class="prelude-val">None </span>=&gt; {
+                                <span class="kw">let </span>result = fut.<span class="kw">await</span>;
+                                (input, result)
+                            }
+                            <span class="prelude-val">Some</span>(timeout) =&gt; {
+                                <span class="kw">let </span>result = <span class="macro">select!</span> {
+                                    result = fut.fuse() =&gt; {
+                                        result
+                                    }
+                                    <span class="kw">_ </span>= timeout.fuse() =&gt; {
+                                        <span class="prelude-val">Err</span>(Error::new(
+                                            ErrorKind::Unexpected, <span class="string">"write part timeout"</span>)
+                                                .with_context(<span class="string">"upload_id"</span>, input.upload_id.to_string())
+                                                .with_context(<span class="string">"part_number"</span>, input.part_number.to_string())
+                                                .set_temporary())
+                                    }
+                                };
+                                (input, result)
+                            }
+                        }
+                    }
+                })
+            }),
         }
     }
 
-    <span class="kw">fn </span>fill_cache(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bs: Bytes) -&gt; usize {
+    <span class="kw">fn </span>fill_cache(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bs: Buffer) -&gt; usize {
         <span class="kw">let </span>size = bs.len();
         <span class="macro">assert!</span>(<span class="self">self</span>.cache.is_none());
         <span class="self">self</span>.cache = <span class="prelude-val">Some</span>(bs);
@@ -657,7 +631,7 @@
             <span class="prelude-val">None </span>=&gt; {
                 <span class="comment">// Fill cache with the first write.
                 </span><span class="kw">if </span><span class="self">self</span>.cache.is_none() {
-                    <span class="kw">let </span>size = <span class="self">self</span>.fill_cache(bs.to_bytes());
+                    <span class="kw">let </span>size = <span class="self">self</span>.fill_cache(bs);
                     <span class="kw">return </span><span class="prelude-val">Ok</span>(size);
                 }
 
@@ -668,40 +642,22 @@
             }
         };
 
-        <span class="kw">loop </span>{
-            <span class="kw">if </span><span class="self">self</span>.futures.has_remaining() {
-                <span class="kw">let </span>cache = <span class="self">self</span>.cache.take().expect(<span class="string">"pending write must exist"</span>);
-                <span class="kw">let </span>part_number = <span class="self">self</span>.next_part_number;
-                <span class="self">self</span>.next_part_number += <span class="number">1</span>;
+        <span class="kw">let </span>bytes = <span class="self">self</span>.cache.clone().expect(<span class="string">"pending write must exist"</span>);
+        <span class="kw">let </span>part_number = <span class="self">self</span>.next_part_number;
 
-                <span class="self">self</span>.futures.push_back(WritePartFuture::new(
-                    <span class="self">self</span>.w.clone(),
-                    upload_id.clone(),
-                    part_number,
-                    cache,
-                ));
-                <span class="kw">let </span>size = <span class="self">self</span>.fill_cache(bs.to_bytes());
-                <span class="kw">return </span><span class="prelude-val">Ok</span>(size);
-            }
-
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(part) = <span class="self">self</span>.futures.next().<span class="kw">await </span>{
-                <span class="kw">match </span>part {
-                    <span class="prelude-val">Ok</span>(part) =&gt; {
-                        <span class="self">self</span>.parts.push(part);
-                        <span class="kw">continue</span>;
-                    }
-                    <span class="prelude-val">Err</span>((part_number, bytes, err)) =&gt; {
-                        <span class="self">self</span>.futures.push_front(WritePartFuture::new(
-                            <span class="self">self</span>.w.clone(),
-                            upload_id.clone(),
-                            part_number,
-                            bytes,
-                        ));
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(err);
-                    }
-                }
-            }
-        }
+        <span class="self">self</span>.tasks
+            .execute(WriteInput {
+                w: <span class="self">self</span>.w.clone(),
+                executor: <span class="self">self</span>.executor.clone(),
+                upload_id: upload_id.clone(),
+                part_number,
+                bytes,
+            })
+            .<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="self">self</span>.cache = <span class="prelude-val">None</span>;
+        <span class="self">self</span>.next_part_number += <span class="number">1</span>;
+        <span class="kw">let </span>size = <span class="self">self</span>.fill_cache(bs);
+        <span class="prelude-val">Ok</span>(size)
     }
 
     <span class="kw">async fn </span>close(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
@@ -709,7 +665,7 @@
             <span class="prelude-val">Some</span>(v) =&gt; v,
             <span class="prelude-val">None </span>=&gt; {
                 <span class="kw">let </span>(size, body) = <span class="kw">match </span><span class="self">self</span>.cache.clone() {
-                    <span class="prelude-val">Some</span>(cache) =&gt; (cache.len(), Buffer::from(cache)),
+                    <span class="prelude-val">Some</span>(cache) =&gt; (cache.len(), cache),
                     <span class="prelude-val">None </span>=&gt; (<span class="number">0</span>, Buffer::new()),
                 };
                 <span class="comment">// Call write_once if there is no upload_id.
@@ -719,67 +675,54 @@
             }
         };
 
-        <span class="kw">loop </span>{
-            <span class="comment">// futures queue is empty and cache is consumed, we can complete the upload.
-            </span><span class="kw">if </span><span class="self">self</span>.futures.is_empty() &amp;&amp; <span class="self">self</span>.cache.is_none() {
-                <span class="kw">return </span><span class="self">self</span>.w.complete_part(<span class="kw-2">&amp;</span>upload_id, <span class="kw-2">&amp;</span><span class="self">self</span>.parts).<span class="kw">await</span>;
-            }
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(cache) = <span class="self">self</span>.cache.clone() {
+            <span class="kw">let </span>part_number = <span class="self">self</span>.next_part_number;
 
-            <span class="kw">if </span><span class="self">self</span>.futures.has_remaining() {
-                <span class="comment">// This must be the final task.
-                </span><span class="kw">if let </span><span class="prelude-val">Some</span>(cache) = <span class="self">self</span>.cache.take() {
-                    <span class="kw">let </span>part_number = <span class="self">self</span>.next_part_number;
-                    <span class="self">self</span>.next_part_number += <span class="number">1</span>;
-
-                    <span class="self">self</span>.futures.push_back(WritePartFuture::new(
-                        <span class="self">self</span>.w.clone(),
-                        upload_id.clone(),
-                        part_number,
-                        cache,
-                    ));
-                }
-            }
-
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(part) = <span class="self">self</span>.futures.next().<span class="kw">await </span>{
-                <span class="kw">match </span>part {
-                    <span class="prelude-val">Ok</span>(part) =&gt; {
-                        <span class="self">self</span>.parts.push(part);
-                        <span class="kw">continue</span>;
-                    }
-                    <span class="prelude-val">Err</span>((part_number, bytes, err)) =&gt; {
-                        <span class="self">self</span>.futures.push_front(WritePartFuture::new(
-                            <span class="self">self</span>.w.clone(),
-                            upload_id.clone(),
-                            part_number,
-                            bytes,
-                        ));
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(err);
-                    }
-                }
-            }
+            <span class="self">self</span>.tasks
+                .execute(WriteInput {
+                    w: <span class="self">self</span>.w.clone(),
+                    executor: <span class="self">self</span>.executor.clone(),
+                    upload_id: upload_id.clone(),
+                    part_number,
+                    bytes: cache,
+                })
+                .<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="self">self</span>.cache = <span class="prelude-val">None</span>;
+            <span class="self">self</span>.next_part_number += <span class="number">1</span>;
         }
-    }
+
+        <span class="kw">loop </span>{
+            <span class="kw">let </span><span class="prelude-val">Some</span>(result) = <span class="self">self</span>.tasks.next().<span class="kw">await</span>.transpose()<span class="question-mark">? </span><span class="kw">else </span>{
+                <span class="kw">break</span>;
+            };
+            <span class="self">self</span>.parts.push(result)
+        }
+
+        <span class="self">self</span>.w.complete_part(<span class="kw-2">&amp;</span>upload_id, <span class="kw-2">&amp;</span><span class="self">self</span>.parts).<span class="kw">await
+    </span>}
 
     <span class="kw">async fn </span>abort(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span><span class="prelude-val">Some</span>(upload_id) = <span class="self">self</span>.upload_id.clone() <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Ok</span>(());
         };
 
-        <span class="self">self</span>.futures.clear();
-        <span class="self">self</span>.w.abort_part(<span class="kw-2">&amp;</span>upload_id).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="self">self</span>.tasks.clear();
         <span class="self">self</span>.cache = <span class="prelude-val">None</span>;
+        <span class="self">self</span>.w.abort_part(<span class="kw-2">&amp;</span>upload_id).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
 }
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
-    <span class="kw">use </span>std::sync::Mutex;
+    <span class="kw">use </span>std::time::Duration;
 
     <span class="kw">use </span>pretty_assertions::assert_eq;
     <span class="kw">use </span>rand::thread_rng;
     <span class="kw">use </span>rand::Rng;
     <span class="kw">use </span>rand::RngCore;
+    <span class="kw">use </span>tokio::sync::Mutex;
+    <span class="kw">use </span>tokio::time::sleep;
 
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::raw::oio::Write;
@@ -804,12 +747,12 @@
 
     <span class="kw">impl </span>MultipartWrite <span class="kw">for </span>Arc&lt;Mutex&lt;TestWrite&gt;&gt; {
         <span class="kw">async fn </span>write_once(<span class="kw-2">&amp;</span><span class="self">self</span>, size: u64, <span class="kw">_</span>: Buffer) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-            <span class="self">self</span>.lock().unwrap().length += size;
+            <span class="self">self</span>.lock().<span class="kw">await</span>.length += size;
             <span class="prelude-val">Ok</span>(())
         }
 
         <span class="kw">async fn </span>initiate_part(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
-            <span class="kw">let </span>upload_id = <span class="self">self</span>.lock().unwrap().upload_id.clone();
+            <span class="kw">let </span>upload_id = <span class="self">self</span>.lock().<span class="kw">await</span>.upload_id.clone();
             <span class="prelude-val">Ok</span>(upload_id)
         }
 
@@ -820,25 +763,36 @@
             size: u64,
             <span class="kw">_</span>: Buffer,
         ) -&gt; <span class="prelude-ty">Result</span>&lt;MultipartPart&gt; {
-            <span class="kw">let </span><span class="kw-2">mut </span>test = <span class="self">self</span>.lock().unwrap();
-            <span class="macro">assert_eq!</span>(upload_id, test.upload_id);
-
-            <span class="comment">// We will have 50% percent rate for write part to fail.
-            </span><span class="kw">if </span>thread_rng().gen_bool(<span class="number">5.0 </span>/ <span class="number">10.0</span>) {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(Error::new(ErrorKind::Unexpected, <span class="string">"I'm a crazy monkey!"</span>));
+            {
+                <span class="kw">let </span>test = <span class="self">self</span>.lock().<span class="kw">await</span>;
+                <span class="macro">assert_eq!</span>(upload_id, test.upload_id);
             }
 
-            test.part_numbers.push(part_number);
-            test.length += size;
+            <span class="comment">// Add an async sleep here to enforce some pending.
+            </span>sleep(Duration::from_millis(<span class="number">50</span>)).<span class="kw">await</span>;
+
+            <span class="comment">// We will have 10% percent rate for write part to fail.
+            </span><span class="kw">if </span>thread_rng().gen_bool(<span class="number">1.0 </span>/ <span class="number">10.0</span>) {
+                <span class="kw">return </span><span class="prelude-val">Err</span>(
+                    Error::new(ErrorKind::Unexpected, <span class="string">"I'm a crazy monkey!"</span>).set_temporary()
+                );
+            }
+
+            {
+                <span class="kw">let </span><span class="kw-2">mut </span>test = <span class="self">self</span>.lock().<span class="kw">await</span>;
+                test.part_numbers.push(part_number);
+                test.length += size;
+            }
 
             <span class="prelude-val">Ok</span>(MultipartPart {
                 part_number,
                 etag: <span class="string">"etag"</span>.to_string(),
+                checksum: <span class="prelude-val">None</span>,
             })
         }
 
         <span class="kw">async fn </span>complete_part(<span class="kw-2">&amp;</span><span class="self">self</span>, upload_id: <span class="kw-2">&amp;</span>str, parts: <span class="kw-2">&amp;</span>[MultipartPart]) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-            <span class="kw">let </span>test = <span class="self">self</span>.lock().unwrap();
+            <span class="kw">let </span>test = <span class="self">self</span>.lock().<span class="kw">await</span>;
             <span class="macro">assert_eq!</span>(upload_id, test.upload_id);
             <span class="macro">assert_eq!</span>(parts.len(), test.part_numbers.len());
 
@@ -846,7 +800,7 @@
         }
 
         <span class="kw">async fn </span>abort_part(<span class="kw-2">&amp;</span><span class="self">self</span>, upload_id: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-            <span class="kw">let </span>test = <span class="self">self</span>.lock().unwrap();
+            <span class="kw">let </span>test = <span class="self">self</span>.lock().<span class="kw">await</span>;
             <span class="macro">assert_eq!</span>(upload_id, test.upload_id);
 
             <span class="prelude-val">Ok</span>(())
@@ -857,7 +811,7 @@
     </span><span class="kw">async fn </span>test_multipart_upload_writer_with_concurrent_errors() {
         <span class="kw">let </span><span class="kw-2">mut </span>rng = thread_rng();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>w = MultipartWriter::new(TestWrite::new(), <span class="number">8</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>w = MultipartWriter::new(TestWrite::new(), <span class="prelude-val">Some</span>(Executor::new()), <span class="number">200</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>total_size = <span class="number">0u64</span>;
 
         <span class="kw">for _ in </span><span class="number">0</span>..<span class="number">1000 </span>{
@@ -886,7 +840,7 @@
         <span class="kw">let </span>expected_parts: Vec&lt;<span class="kw">_</span>&gt; = (<span class="number">0</span>..<span class="number">1000</span>).collect();
         <span class="macro">assert_eq!</span>(actual_parts, expected_parts);
 
-        <span class="kw">let </span>actual_size = w.w.lock().unwrap().length;
+        <span class="kw">let </span>actual_size = w.w.lock().<span class="kw">await</span>.length;
         <span class="macro">assert_eq!</span>(actual_size, total_size);
     }
 }
