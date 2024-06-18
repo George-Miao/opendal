@@ -876,10 +876,6 @@
 <a href="#876" id="876">876</a>
 <a href="#877" id="877">877</a>
 <a href="#878" id="878">878</a>
-<a href="#879" id="879">879</a>
-<a href="#880" id="880">880</a>
-<a href="#881" id="881">881</a>
-<a href="#882" id="882">882</a>
 </pre></div><pre class="rust"><code><span class="comment">// Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -1311,7 +1307,7 @@
 
         <span class="kw">let </span>path_id = <span class="self">self</span>.path_cache.get(base).<span class="kw">await</span><span class="question-mark">?</span>.ok_or(Error::new(
             ErrorKind::NotFound,
-            <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"read path not found: {}"</span>, base),
+            <span class="macro">format!</span>(<span class="string">"read path not found: {}"</span>, base),
         ))<span class="question-mark">?</span>;
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(docwsid) = path_id.strip_prefix(<span class="string">"FILE::com.apple.CloudDocs::"</span>) {
@@ -1338,12 +1334,12 @@
 
         <span class="kw">let </span>file_id = <span class="self">self</span>.path_cache.get(base).<span class="kw">await</span><span class="question-mark">?</span>.ok_or(Error::new(
             ErrorKind::NotFound,
-            <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"stat path not found: {}"</span>, base),
+            <span class="macro">format!</span>(<span class="string">"stat path not found: {}"</span>, base),
         ))<span class="question-mark">?</span>;
 
         <span class="kw">let </span>folder_id = <span class="self">self</span>.path_cache.get(parent).<span class="kw">await</span><span class="question-mark">?</span>.ok_or(Error::new(
             ErrorKind::NotFound,
-            <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"stat path not found: {}"</span>, parent),
+            <span class="macro">format!</span>(<span class="string">"stat path not found: {}"</span>, parent),
         ))<span class="question-mark">?</span>;
 
         <span class="kw">let </span>node = <span class="self">self</span>.get_root(<span class="kw-2">&amp;</span>folder_id).<span class="kw">await</span><span class="question-mark">?</span>;
@@ -1472,7 +1468,7 @@
         }
     }
 
-    <span class="kw">let </span><span class="kw-2">mut </span>err = Error::new(kind, <span class="kw-2">&amp;</span>message);
+    <span class="kw">let </span><span class="kw-2">mut </span>err = Error::new(kind, message);
 
     err = with_error_response_context(err, parts);
 
@@ -1505,16 +1501,12 @@
 <span class="attr">#[derive(Deserialize, Default, Clone, Debug)]
 #[serde(rename_all = <span class="string">"camelCase"</span>)]
 </span><span class="kw">pub struct </span>Drivews {
-    <span class="kw">pub </span>pcs_required: bool,
-    <span class="kw">pub </span>status: String,
     <span class="kw">pub </span>url: <span class="prelude-ty">Option</span>&lt;String&gt;,
 }
 
 <span class="attr">#[derive(Deserialize, Default, Clone, Debug)]
 #[serde(rename_all = <span class="string">"camelCase"</span>)]
 </span><span class="kw">pub struct </span>Docws {
-    <span class="kw">pub </span>pcs_required: bool,
-    <span class="kw">pub </span>status: String,
     <span class="kw">pub </span>url: <span class="prelude-ty">Option</span>&lt;String&gt;,
 }
 
